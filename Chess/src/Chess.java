@@ -1,4 +1,6 @@
 import com.chess.Move.MoveStatus;
+import com.chess.Players.AI;
+import com.chess.Players.Player;
 import com.chess.board.GameBoard;
 import com.chess.Move.Move;
 import com.chess.gui.Board;
@@ -10,28 +12,36 @@ public class Chess{
     public static void main(String[] args) {
         Chess f = new Chess();
     }
-    public MoveStatus status = new MoveStatus();
     Chess() {
 
+        Player white =  new Player(true);
+        Player black = new AI(false);
         GameBoard gameBoard = new GameBoard();
-        Board board = new Board(gameBoard, status);
+        Board board = new Board(gameBoard);
         gameBoard.print();
 
         boolean run = true;
         boolean turn = true;
         int count = 0;
+        board.setPlayer(white);
+        Player currentPlayer = white;
         while (run) {
             if(count == 999999999){
                 count = 0;
-                System.out.print("k");
+                System.out.print("");
             }
             count++;
+            if(currentPlayer.getType().equals("AI")){
+                currentPlayer.generateMove(gameBoard);
+            }
 
-            if(status.getStatus()){
+            if(currentPlayer.getStatus()){
                 System.out.println("success");
-                Boolean success = gameBoard.tryMove(status.useMove(), turn);
+                Boolean success = gameBoard.tryMove(currentPlayer.useMove(), turn);
                 if(success){
                     turn = !turn;
+                    currentPlayer = turn ? white:black;
+                    board.setPlayer(currentPlayer);
                     gameBoard.print();
                     gameBoard.printMoves(turn);
                     board.updateBoard(gameBoard);

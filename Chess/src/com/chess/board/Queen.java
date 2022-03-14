@@ -140,8 +140,6 @@ public class Queen extends Pieces{
                 break;
             }
         }
-
-
         return list;
     }
 

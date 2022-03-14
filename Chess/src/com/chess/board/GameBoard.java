@@ -8,14 +8,14 @@ public class GameBoard {
     private final Pieces[] board = new Pieces[64];
     private int whiteKing;
     private int blackKing;
+    private int moveCount = 0;
 
     public GameBoard(){
         setBoard();
     }
 
-
-
     private Pieces movePiece(Move move){
+        moveCount++;
         board[move.getFrom()].move(move.getTo());
         Pieces removed = board[move.getTo()];
         board[move.getTo()] = board[move.getFrom()];
@@ -25,6 +25,11 @@ public class GameBoard {
         if(piece.getType().equals("king")) {
             if(piece.color){moveWKing(move.getTo());}
             else{moveBKing(move.getTo());}
+        }
+        else if(piece.getType().equals("pawn") && (piece.location> 53 || piece.location < 8)){
+            //TODO if you want to make this trully accurate then this needs to be updated so that a pawn doesn't have
+            // to be promoted to a queen.
+            board[piece.location] = new Queen(piece.color, this, piece.location);
         }
         return removed;
     }
@@ -119,6 +124,7 @@ public class GameBoard {
     }
     public final void moveWKing(int newPos){ whiteKing = newPos;}
     public final void moveBKing(int newPos){blackKing = newPos;}
+    public final int getMoveCount(){return moveCount;}
 
     public void setBoard(){
         board[0] = new Rook(false, this, 0);

@@ -46,7 +46,6 @@ public class BPawn extends Pieces{
             }
         }
         return moves;
-
     }
     @Override
     public void setCanEP(boolean canEP) {

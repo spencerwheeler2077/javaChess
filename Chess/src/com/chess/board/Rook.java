@@ -10,7 +10,6 @@ public class Rook extends Pieces{
         hasMoved = false;
         this.type="rook";
         this.imagePath= "Art/" + (color ? "WR": "BR") + ".gif";
-
     }
 
     @Override
@@ -31,8 +30,6 @@ public class Rook extends Pieces{
                 list.add(location - i);
                 break;
             }
-
-
         }
         i=0;
 
@@ -49,8 +46,6 @@ public class Rook extends Pieces{
                 list.add(location + i);
                 break;
             }
-
-
         }
         i=0;
         while (location+(8*i) < 56) {
@@ -82,7 +77,6 @@ public class Rook extends Pieces{
                 break;
             }
         }
-
         return list;
     }
 

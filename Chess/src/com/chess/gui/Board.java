@@ -1,5 +1,6 @@
 package com.chess.gui;
 import com.chess.Move.MoveStatus;
+import com.chess.Players.Player;
 import com.chess.board.GameBoard;
 import com.chess.Move.Move;
 import com.chess.board.Pieces;
@@ -19,19 +20,19 @@ import static javax.swing.SwingUtilities.*;
 public class Board {
     private final JFrame gameFrame;
     private BoardPanel boardPanel;
-    private static int WIDTH_HEIGHT = 800;
+    private static int WIDTH_HEIGHT = 650;
     private static Dimension OUTER_FRAME_DIMENSION = new Dimension(WIDTH_HEIGHT, WIDTH_HEIGHT);
-    private static Dimension BOARD_PANAL_DIMENSION = new Dimension(400, 400);
-    private final static Dimension TILE_PANEL_DIMENSION = new Dimension(10, 10);
+    private static Dimension BOARD_PANAL_DIMENSION = new Dimension(300, 300);
+    private final static Dimension TILE_PANEL_DIMENSION = new Dimension(5, 5);
     private final Color darkTilecolor = Color.decode("#593E1A");
     private final Color lightTilecolor = Color.decode("#FFFACD");
     private GameBoard gameBoard;
     private TilePanel sourceTile;
     private TilePanel secondTile;
-    private MoveStatus status;
+    private Player currentPlayer;
 
-    public Board(GameBoard gameBoard, MoveStatus status){
-        this.status = status;
+    public Board(GameBoard gameBoard){
+
         this.gameBoard = gameBoard;
         this.gameFrame = new JFrame("Chess");
         this.gameFrame.setLayout(new BorderLayout());
@@ -40,6 +41,9 @@ public class Board {
         this.boardPanel = new BoardPanel(this.gameBoard);
         this.gameFrame.add(this.boardPanel, BorderLayout.CENTER);
         gameFrame.validate();
+    }
+    public void setPlayer(Player player) {
+        this.currentPlayer = player;
     }
     public void updateBoard(GameBoard board){
         boardPanel.update(board);
@@ -90,44 +94,43 @@ public class Board {
             addMouseListener(new MouseListener() {
                 @Override
                 public void mouseClicked(MouseEvent event) {
-                    if(isLeftMouseButton(event)){
-                        if(sourceTile == null){
-                            sourceTile = boardPanel.getTile(tileId);
-                        }
-                        else if(secondTile== null){
-                            secondTile = boardPanel.getTile(tileId);
-                            Move playerMove = new Move(sourceTile.tileId, secondTile.tileId);
-                            if(playerMove.getFrom() == 60
-                                    && gameBoard.getIndex(60).getType().equals("king")
-                                    && playerMove.getTo() - 60 == 2){
-                                playerMove.setCanCastleShort();
-                            }
-                            else if(playerMove.getFrom() == 60
-                                    && gameBoard.getIndex(60).getType().equals("king")
-                                    && playerMove.getTo() - 60 == -2){
-                                playerMove.setCanCastleLong();
-                            }
-                            else if(playerMove.getFrom() == 4
-                                    && gameBoard.getIndex(4).getType().equals("king")
-                                    && playerMove.getTo() - 4 == 2){
-                                playerMove.setCanCastleShort();
-                            }
-                            else if(playerMove.getFrom() == 4
-                                    && gameBoard.getIndex(4).getType().equals("king")
-                                    && playerMove.getTo() - 4 == -2){
-                                playerMove.setCanCastleLong();
-                            }
+                    if (currentPlayer.getType().equals("human")) {
 
-                            System.out.println(playerMove.getFrom() + "");
-                            status.setMove(playerMove);
+                        if (isLeftMouseButton(event)) {
+                            if (sourceTile == null) {
+                                sourceTile = boardPanel.getTile(tileId);
+                            } else if (secondTile == null) {
+                                secondTile = boardPanel.getTile(tileId);
+                                Move playerMove = new Move(sourceTile.tileId, secondTile.tileId);
+                                if (playerMove.getFrom() == 60
+                                        && gameBoard.getIndex(60).getType().equals("king")
+                                        && playerMove.getTo() - 60 == 2) {
+                                    playerMove.setCanCastleShort();
+                                } else if (playerMove.getFrom() == 60
+                                        && gameBoard.getIndex(60).getType().equals("king")
+                                        && playerMove.getTo() - 60 == -2) {
+                                    playerMove.setCanCastleLong();
+                                } else if (playerMove.getFrom() == 4
+                                        && gameBoard.getIndex(4).getType().equals("king")
+                                        && playerMove.getTo() - 4 == 2) {
+                                    playerMove.setCanCastleShort();
+                                } else if (playerMove.getFrom() == 4
+                                        && gameBoard.getIndex(4).getType().equals("king")
+                                        && playerMove.getTo() - 4 == -2) {
+                                    playerMove.setCanCastleLong();
+                                }
+
+                                System.out.println(playerMove.getFrom() + "");
+                                currentPlayer.setMove(playerMove);
+                                sourceTile = null;
+                                secondTile = null;
+                            }
+                        } else if (isRightMouseButton(event)) {
                             sourceTile = null;
                             secondTile = null;
                         }
                     }
-                    else if(isRightMouseButton(event)){
-                        sourceTile = null;
-                        secondTile = null;
-                    }
+
                 }
 
                 //Dont think any of these will be needed but will leave them here just in case.
