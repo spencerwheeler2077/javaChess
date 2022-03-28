@@ -73,4 +73,8 @@ public class WPawn extends Pieces{
         return hasMoved;
     }
 
+    @Override
+    public double eval() {
+        return gameBoard.evalList.getPawn(location);
+    }
 }

@@ -66,4 +66,10 @@ public class Knight extends Pieces{
         return list;
     }
 
+    @Override
+    public double eval() {
+        return color ?
+                gameBoard.evalList.getKnight(location):
+                -1 * gameBoard.evalList.getKnight(-1* (location-63));
+    }
 }

@@ -21,9 +21,11 @@ public class BPawn extends Pieces{
         if(nextSpace == null){
             moves.add(location + 8);
         }
-        nextSpace = gameBoard.getIndex(location + 16);
-        if(nextSpace == null && !hasMoved){
-            moves.add(location + 16);
+        if(!hasMoved()){
+            nextSpace = gameBoard.getIndex(location + 16);
+            if(nextSpace == null){
+                moves.add(location + 16);
+            }
         }
         if(location%8 > 0) {
             nextSpace = gameBoard.getIndex(location + 7);
@@ -69,4 +71,8 @@ public class BPawn extends Pieces{
         return hasMoved;
     }
 
+    @Override
+    public double eval() {
+        return -1*gameBoard.evalList.getPawn(-1*(location-63));
+    }
 }

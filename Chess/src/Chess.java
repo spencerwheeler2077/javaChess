@@ -13,7 +13,6 @@ public class Chess{
         Chess f = new Chess();
     }
     Chess() {
-
         Player white =  new Player(true);
         Player black = new AI(false);
         GameBoard gameBoard = new GameBoard();

@@ -1,5 +1,6 @@
 package com.chess.board;
 
+import com.chess.Move.EvalList;
 import com.chess.Move.Move;
 
 import java.util.ArrayList;
@@ -9,9 +10,13 @@ public class GameBoard {
     private int whiteKing;
     private int blackKing;
     private int moveCount = 0;
+    public final EvalList evalList = new EvalList("EvalFIles/firstEvalFile");
+    public double evaluation;
 
     public GameBoard(){
         setBoard();
+        evaluation();
+        System.out.println();
     }
 
     private Pieces movePiece(Move move){
@@ -26,7 +31,7 @@ public class GameBoard {
             if(piece.color){moveWKing(move.getTo());}
             else{moveBKing(move.getTo());}
         }
-        else if(piece.getType().equals("pawn") && (piece.location> 53 || piece.location < 8)){
+        else if(piece.getType().equals("pawn") && (piece.location > 55 || piece.location < 8)){
             //TODO if you want to make this trully accurate then this needs to be updated so that a pawn doesn't have
             // to be promoted to a queen.
             board[piece.location] = new Queen(piece.color, this, piece.location);
@@ -276,6 +281,16 @@ public class GameBoard {
 
         }
         System.out.println("  0   1   2   3   4   5   6   7");
+    }
+
+    public double evaluation(){
+        double eval = 0;
+        for(Pieces piece : board){
+            if(piece != null) {
+                eval += piece.eval();
+            }
+        }
+        return eval;
     }
 
 

@@ -79,5 +79,9 @@ public class Bishop extends Pieces{
 
         return list;
     }
-
+    public double eval(){
+        return color ?
+                gameBoard.evalList.getBishop(location):
+                -1 * gameBoard.evalList.getBishop(-1*(location-63));
+    }
 }

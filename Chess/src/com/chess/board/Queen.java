@@ -11,6 +11,13 @@ public class Queen extends Pieces{
     }
 
     @Override
+    public double eval() {
+        return color ?
+                gameBoard.evalList.getQueen(location) :
+                -1 * gameBoard.evalList.getQueen(-1 * (location - 63));
+    }
+
+    @Override
     ArrayList<Integer> returnPossibleMoves() {
         ArrayList<Integer> list = new ArrayList<>();
         Pieces nextSpace;

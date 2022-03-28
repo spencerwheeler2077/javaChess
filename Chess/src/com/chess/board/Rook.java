@@ -90,4 +90,12 @@ public class Rook extends Pieces{
         location = newLocation;
         hasMoved = true;
     }
+
+    @Override
+    public double eval() {
+        double thing = gameBoard.evalList.getRook(63);
+        return color ?
+                gameBoard.evalList.getRook(location):
+                -1 * gameBoard.evalList.getRook(-1* (location-63));
+    }
 }

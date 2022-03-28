@@ -112,6 +112,14 @@ public class King extends Pieces{
         }
         return list;
     }
+
+    @Override
+    public double eval() {
+        return color ?
+                gameBoard.evalList.getKing(location):
+                -1 * gameBoard.evalList.getKing(-1* (location-63));
+    }
+
     @Override
     boolean hasMoved() {
         return hasMoved;

@@ -18,6 +18,7 @@ public abstract class Pieces {
         this.color = white;
         this.imagePath = "pixil-frame-0.png";
     }
+    abstract public double eval();
     abstract ArrayList<Integer> returnPossibleMoves();
     void move(int newLocation){
         location = newLocation;
