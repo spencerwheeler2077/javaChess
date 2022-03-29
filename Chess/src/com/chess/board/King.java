@@ -10,6 +10,13 @@ public class King extends Pieces{
         this.type = "king";
         this.imagePath= "Art/" + (color ? "WK": "BK") + ".gif";
     }
+    private King(boolean white, GameBoard gameBoard, int location, boolean hasMoved){
+        super(white, gameBoard, location);
+        this.value = 999999999;
+        this.type = "king";
+        this.imagePath = "Art/" + (color ? "WK": "BK") + ".gif";
+        this.hasMoved = hasMoved;
+    }
 
     @Override
     ArrayList<Integer> returnPossibleMoves() {
@@ -111,6 +118,9 @@ public class King extends Pieces{
 
         }
         return list;
+    }
+    public Pieces clone(GameBoard newGameBoard) {
+        return new King(color, newGameBoard, location, hasMoved);
     }
 
     @Override

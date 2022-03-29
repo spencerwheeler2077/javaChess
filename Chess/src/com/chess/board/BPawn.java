@@ -8,9 +8,17 @@ public class BPawn extends Pieces{
     public BPawn(GameBoard gameBoard, int location) {
         super(false, gameBoard, location);
         this.type = "pawn";
-        this.value = 100;
+        this.value = 1;
         this.hasMoved = false;
         this.canEP = false;
+        this.imagePath = "Art/BP.gif";
+    }
+    private BPawn(GameBoard gameBoard, int location, boolean hasMoved, boolean canEP) {
+        super(false, gameBoard, location);
+        this.type = "pawn";
+        this.value = 1;
+        this.hasMoved = hasMoved;
+        this.canEP = canEP;
         this.imagePath = "Art/BP.gif";
     }
 
@@ -73,6 +81,11 @@ public class BPawn extends Pieces{
 
     @Override
     public double eval() {
-        return -1*gameBoard.evalList.getPawn(-1*(location-63));
+        return (-1*gameBoard.evalList.getPawn(-1*(location-63)))-value;
+    }
+
+    @Override
+    public Pieces clone(GameBoard newGameBoard) {
+        return new BPawn(newGameBoard, location, hasMoved, canEP);
     }
 }

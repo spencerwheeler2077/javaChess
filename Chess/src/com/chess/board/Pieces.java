@@ -7,7 +7,7 @@ public abstract class Pieces {
     int location;
     boolean color;
     String type;
-    int value;
+    double value;
     GameBoard gameBoard;
 
 
@@ -28,10 +28,8 @@ public abstract class Pieces {
         return this.type;
     }
     public boolean enPassant(){ return false; }
-    public int getValue(){
-        return this.value;
-    }
     public void setCanEP(boolean canEP){}
+    public abstract Pieces clone(GameBoard newGameBoard);
 
 
     boolean hasMoved() {

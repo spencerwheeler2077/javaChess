@@ -7,7 +7,7 @@ import java.util.ArrayList;
 public class Bishop extends Pieces{
     public Bishop(boolean white, GameBoard gameBoard, int location) {
         super(white, gameBoard, location);
-        this.value = 300;
+        this.value = 3.1;
         this.type = "bishop";
         this.imagePath= "Art/" + (color ? "WB": "BB") + ".gif";
     }
@@ -79,9 +79,14 @@ public class Bishop extends Pieces{
 
         return list;
     }
+
+    public Pieces clone(GameBoard newBoard) {
+        return new Bishop(color, newBoard, location);
+    }
+
     public double eval(){
         return color ?
-                gameBoard.evalList.getBishop(location):
-                -1 * gameBoard.evalList.getBishop(-1*(location-63));
+                (value + gameBoard.evalList.getBishop(location)):
+                (-1 * gameBoard.evalList.getBishop(-1*(location-63))-value);
     }
 }

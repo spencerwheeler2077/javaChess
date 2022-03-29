@@ -5,7 +5,7 @@ import java.util.ArrayList;
 public class Knight extends Pieces{
     public Knight(boolean white, GameBoard gameBoard, int location) {
         super(white, gameBoard, location);
-        this.value = 300;
+        this.value = 3;
         this.type = "knight";
         this.imagePath= "Art/" + (color ? "WN": "BN") + ".gif";
     }
@@ -20,7 +20,7 @@ public class Knight extends Pieces{
                 list.add(location + 15);
             }
         }
-        if(location < 49 && location %8 < 7){
+        if(location < 48 && location %8 < 7){
             nextSpace = gameBoard.getIndex(location +17);
             if(nextSpace == null || nextSpace.color != color) {
                 list.add(location + 17);
@@ -66,10 +66,14 @@ public class Knight extends Pieces{
         return list;
     }
 
+    public Pieces clone(GameBoard newBoard) {
+        return new Knight(color, newBoard, location);
+    }
+
     @Override
     public double eval() {
         return color ?
-                gameBoard.evalList.getKnight(location):
-                -1 * gameBoard.evalList.getKnight(-1* (location-63));
+                (value + gameBoard.evalList.getKnight(location)):
+                (-1 * gameBoard.evalList.getKnight(-1* (location-63))-value);
     }
 }

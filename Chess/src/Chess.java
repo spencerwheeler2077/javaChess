@@ -3,6 +3,7 @@ import com.chess.Players.AI;
 import com.chess.Players.Player;
 import com.chess.board.GameBoard;
 import com.chess.Move.Move;
+import com.chess.board.Pieces;
 import com.chess.gui.Board;
 
 import java.util.logging.Handler;
@@ -24,7 +25,7 @@ public class Chess{
         int count = 0;
         board.setPlayer(white);
         Player currentPlayer = white;
-        while (run) {
+        while (!gameBoard.stalemate && gameBoard.checkmate==0) {
             if(count == 999999999){
                 count = 0;
                 System.out.print("");
@@ -36,6 +37,7 @@ public class Chess{
 
             if(currentPlayer.getStatus()){
                 System.out.println("success");
+                Pieces[] pieces = gameBoard.getBoard();
                 Boolean success = gameBoard.tryMove(currentPlayer.useMove(), turn);
                 if(success){
                     turn = !turn;

@@ -3,6 +3,7 @@ package com.chess.Move;
 public class Move{
     private final int from;
     private final int to;
+    public double eval;
     private String castle;
     public Move(int from, int to){
         this.from = from;

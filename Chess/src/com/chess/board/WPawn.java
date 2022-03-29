@@ -7,10 +7,18 @@ public class WPawn extends Pieces{
         private boolean canEP;
     public WPawn(GameBoard gameBoard, int location) {
         super(true, gameBoard, location);
-        this.value = 100;
+        this.value = 1;
         this.type = "pawn";
         this.hasMoved = false;
         this.canEP = false;
+        this.imagePath = "Art/WP.gif";
+    }
+    private WPawn(GameBoard gameBoard, int location, boolean hasMoved, boolean canEP) {
+        super(true, gameBoard, location);
+        this.value = 1;
+        this.type = "pawn";
+        this.hasMoved = hasMoved;
+        this.canEP = canEP;
         this.imagePath = "Art/WP.gif";
     }
 
@@ -75,6 +83,12 @@ public class WPawn extends Pieces{
 
     @Override
     public double eval() {
-        return gameBoard.evalList.getPawn(location);
+        return value + gameBoard.evalList.getPawn(location);
+    }
+
+
+    @Override
+    public Pieces clone(GameBoard newGameBoard) {
+        return new WPawn(newGameBoard, location, hasMoved, canEP);
     }
 }

@@ -6,8 +6,15 @@ public class Rook extends Pieces{
     private boolean hasMoved;
     public Rook(boolean white, GameBoard gameBoard, int position) {
         super(white, gameBoard, position);
-        this.value = 500;
+        this.value = 5;
         hasMoved = false;
+        this.type="rook";
+        this.imagePath= "Art/" + (color ? "WR": "BR") + ".gif";
+    }
+    public Rook(boolean white, GameBoard gameBoard, int position, boolean hasMoved) {
+        super(white, gameBoard, position);
+        this.value = 5;
+        this.hasMoved = hasMoved;
         this.type="rook";
         this.imagePath= "Art/" + (color ? "WR": "BR") + ".gif";
     }
@@ -81,6 +88,11 @@ public class Rook extends Pieces{
     }
 
     @Override
+    public Pieces clone(GameBoard newGameBoard) {
+        return new Rook(color, newGameBoard, location, hasMoved);
+    }
+
+    @Override
     boolean hasMoved() {
         return hasMoved;
     }
@@ -95,7 +107,7 @@ public class Rook extends Pieces{
     public double eval() {
         double thing = gameBoard.evalList.getRook(63);
         return color ?
-                gameBoard.evalList.getRook(location):
-                -1 * gameBoard.evalList.getRook(-1* (location-63));
+                (value+gameBoard.evalList.getRook(location)):
+                (-1 * gameBoard.evalList.getRook(-1* (location-63))-value);
     }
 }

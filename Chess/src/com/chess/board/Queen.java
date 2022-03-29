@@ -5,7 +5,7 @@ import java.util.ArrayList;
 public class Queen extends Pieces{
     public Queen(boolean white, GameBoard gameBoard, int location) {
         super(white, gameBoard, location);
-        this.value = 900;
+        this.value = 9;
         this.type = "queen";
         this.imagePath= "Art/" + (color ? "WQ": "BQ") + ".gif";
     }
@@ -13,8 +13,8 @@ public class Queen extends Pieces{
     @Override
     public double eval() {
         return color ?
-                gameBoard.evalList.getQueen(location) :
-                -1 * gameBoard.evalList.getQueen(-1 * (location - 63));
+                (value + gameBoard.evalList.getQueen(location)) :
+                (-1 * gameBoard.evalList.getQueen(-1 * (location - 63))-value);
     }
 
     @Override
@@ -150,4 +150,7 @@ public class Queen extends Pieces{
         return list;
     }
 
+    public Pieces clone(GameBoard newBoard) {
+        return new Queen(color, newBoard, location);
+    }
 }

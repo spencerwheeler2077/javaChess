@@ -5,19 +5,51 @@ import com.chess.Move.Move;
 
 import java.util.ArrayList;
 
-public class GameBoard {
-    private final Pieces[] board = new Pieces[64];
+public class GameBoard{
+    private static Pieces[] board = new Pieces[64];
     private int whiteKing;
     private int blackKing;
     private int moveCount = 0;
     public final EvalList evalList = new EvalList("EvalFIles/firstEvalFile");
     public double evaluation;
+    public int checkmate = 0;
+    public boolean stalemate = false;
+    public boolean whiteCheck = false;
+    public boolean blackCheck = false;
+
 
     public GameBoard(){
         setBoard();
         evaluation();
-        System.out.println();
     }
+    private GameBoard(Pieces[] pieces){
+        int i = 0;
+        for(Pieces piece: pieces){
+            if(piece != null) {
+                board[i] = piece.clone(this);
+            }
+            i++;
+        }
+        this.print();
+    }
+    public GameBoard copy(){
+        GameBoard newBoard = new GameBoard(board);
+        newBoard.blackKing = this.blackKing;
+        newBoard.whiteKing = this.whiteKing;
+        return newBoard;
+    }
+    public void checkFinish() {
+        if (whiteCheck) {
+            checkmate = 1;
+        }else if(blackCheck) {
+            checkmate = -1;
+        }
+        else{
+            stalemate = true;
+        }
+    }
+    public Pieces[] getBoard(){return board;}
+
 
     private Pieces movePiece(Move move){
         moveCount++;
@@ -25,7 +57,6 @@ public class GameBoard {
         Pieces removed = board[move.getTo()];
         board[move.getTo()] = board[move.getFrom()];
         board[move.getFrom()] = null;
-        System.out.println();
         Pieces piece = board[move.getTo()];
         if(piece.getType().equals("king")) {
             if(piece.color){moveWKing(move.getTo());}
@@ -81,7 +112,7 @@ public class GameBoard {
     }
 
     private void resetEnPassant(boolean color, Move move){
-        if(!color){
+        if(!color){ // this is split like this for efficiency. They could be run at the same time without problem.
             //check white pawns
             for(int i = 32; i < 40; i++){
                 //this big logic chunk check if the last move was enpassant
@@ -234,9 +265,18 @@ public class GameBoard {
                 return false;
             }
         }
+        if(color){whiteCheck = false;}
+        else{blackCheck = false;}
         resetEnPassant(color, attempt);
+        if(attempt.getTo() == whiteKing){
+            whiteCheck = true;
+        }
+        else if(attempt.getTo() == blackKing){
+            blackCheck = true;
+        }
         return true;
     }
+
     public void printMoves(boolean color){
         //this is a function that lets you see what moves can be made, mostly just used for testing.
         ArrayList<Move> moves = color ? getWhiteMoves():getBlackMoves();
@@ -285,13 +325,27 @@ public class GameBoard {
 
     public double evaluation(){
         double eval = 0;
+        if(checkmate != 0){
+            evaluation = checkmate*9999999;
+            return evaluation;
+        }
+        if(stalemate){
+            evaluation = 0;
+            return 0;
+        }
+        if(blackCheck){
+            eval += .2;
+        }
+        if(whiteCheck){
+            eval +=.2;
+        }
         for(Pieces piece : board){
             if(piece != null) {
                 eval += piece.eval();
+                    //TODO add things to eval according to pieces.
             }
         }
-        return eval;
+        evaluation = eval;
+        return evaluation;
     }
-
-
 }
