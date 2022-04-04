@@ -36,9 +36,9 @@ public class Chess{
             }
 
             if(currentPlayer.getStatus()){
-                System.out.println("success");
-                Pieces[] pieces = gameBoard.getBoard();
-                Boolean success = gameBoard.tryMove(currentPlayer.useMove(), turn);
+                Move test = currentPlayer.useMove();
+                gameBoard.printMoves(turn);
+                Boolean success = gameBoard.tryMove(test, turn);
                 if(success){
                     turn = !turn;
                     currentPlayer = turn ? white:black;

@@ -26,7 +26,7 @@ public class Knight extends Pieces{
                 list.add(location + 17);
             }
         }
-        if(location < 57 && location %8 < 6){
+        if(location < 53 && location %8 < 6){
             nextSpace = gameBoard.getIndex(location +10);
             if(nextSpace == null || nextSpace.color != color) {
                 list.add(location + 10);

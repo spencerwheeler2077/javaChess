@@ -4,10 +4,10 @@ import com.chess.Move.Move;
 import com.chess.board.GameBoard;
 
 import java.util.ArrayList;
+import java.util.PriorityQueue;
 import java.util.Random;
 
 public class AI extends Player{
-    int maxDepth = 4;
     public AI(boolean color) {
         super(color);
         this.type = "AI";
@@ -21,52 +21,84 @@ public class AI extends Player{
     }
     @Override
     public void generateMove(GameBoard gameBoard){
-        ArrayList<Move> moves = color ? gameBoard.getWhiteMoves(): gameBoard.getBlackMoves();
         GameBoard copy;
-        Move max = null;
-        for(Move current : moves){
-            copy = gameBoard.copy(); //TODO this is a bug this copy returns a list with a null values.
-            copy.tryMove(current, color);
-            copy.print();
-            current.eval = (copy.evaluation());
-
-            if(max == null){
-                max = current;
-                max.eval = generateMove(copy, !color, current, 1).eval;
-            }
-            else if(max.eval < current.eval){
-                max.eval = generateMove(copy, !color, current, 1).eval;
-            }
-        }
-        if(max == null){
-            gameBoard.checkFinish();
-        }
-        this.moveStatus.setMove(max);
-    }
-    private Move generateMove(GameBoard gameBoard, Boolean color, Move previous, int depth){
-        if(depth == maxDepth){ //This is the base case
-            return previous;
-        }
-        ArrayList<Move> moves = color ? gameBoard.getWhiteMoves(): gameBoard.getBlackMoves();
-        GameBoard copy;
-        Move max = null;
-        for(Move current : moves){
+        ArrayList<Move> moves = color? gameBoard.getWhiteMoves():gameBoard.getBlackMoves();
+        final int LIST_SIZE = 6;
+        PriorityQueue<GameBoard> moveList = new PriorityQueue<>(moves.size());
+        for(Move move: moves) {
             copy = gameBoard.copy();
-            copy.print();
-            copy.tryMove(current, color);
-            current.eval = (copy.evaluation());
-            if(max == null){
-                max = generateMove(copy, !color, current, depth+1);
-            }
-            else if(max.eval < current.eval){
-                max = generateMove(copy, !color, current, depth+1);
+
+            if (copy.tryMove(move, color)) {
+                copy.evaluation();
+                moveList.add(copy);
             }
         }
-        if(max == null){
+        GameBoard best = null;
+        Move bestMove = null;
+        for(int i = 0; i < LIST_SIZE; i++){
+            GameBoard board = moveList.remove();
+            Move currentMove = board.getLastMove();
+            board.evaluation = findBesteval(board, !color, LIST_SIZE -1);
+            if(best == null){
+                best = board;
+                bestMove = currentMove;
+            }
+            if(color) {
+                if (best.evaluation < board.evaluation) {
+                    best = board;
+                    bestMove = currentMove;
+                }
+            }
+            else{
+                if(best.evaluation > board.evaluation){
+                    best = board;
+                    bestMove =currentMove;
+                }
+            }
+        }
+        this.moveStatus.setMove(bestMove);
+    }
+    private double findBesteval(GameBoard gameBoard, Boolean color, int depth) {
+        if(depth == 2){
+            return gameBoard.evaluation();
+        }
+        ArrayList<Move> allMoves = color? gameBoard.getWhiteMoves(): gameBoard.getBlackMoves();
+        GameBoard copy = null;
+        if(allMoves.size()== 0){
             gameBoard.checkFinish();
-            previous.eval = gameBoard.evaluation();
-            return previous;
+            return gameBoard.evaluation();
         }
-        return max;
+        PriorityQueue<GameBoard> boards = new PriorityQueue<>(allMoves.size());
+        for(Move currentMove: allMoves){
+            copy = gameBoard.copy();
+            if(gameBoard.tryMove(currentMove, color)){
+                copy.evaluation();
+                boards.add(copy);
+            }
+        }
+        GameBoard best = null;
+        for(int i = 0; i<depth; i++){
+            if(!boards.isEmpty()) {
+                GameBoard board = boards.remove();
+                board.evaluation = findBesteval(board, !color, depth - 1);
+                if (best == null) {
+                    best = board;
+                }
+                if (color) {
+                    if (best.evaluation < board.evaluation) {
+                        best = board;
+                    }
+                } else {
+                    if (best.evaluation > board.evaluation) {
+                        best = board;
+                    }
+                }
+            }
+        }
+        if(best == null){
+            gameBoard.checkFinish();
+            return gameBoard.evaluation();
+        }
+      return best.evaluation;
     }
 }

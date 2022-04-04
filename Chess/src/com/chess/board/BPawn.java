@@ -45,8 +45,8 @@ public class BPawn extends Pieces{
                 moves.add(location + 7);
             }
         }
-        nextSpace = gameBoard.getIndex(location +9);
         if((location%8) < 7) {
+            nextSpace = gameBoard.getIndex(location +9);
             if (nextSpace != null && nextSpace.color != color) {
                 moves.add(location + 9);
             }

@@ -5,8 +5,8 @@ import com.chess.Move.Move;
 
 import java.util.ArrayList;
 
-public class GameBoard{
-    private static Pieces[] board = new Pieces[64];
+public class GameBoard implements Comparable<GameBoard>{
+    private final Pieces[] board = new Pieces[64];
     private int whiteKing;
     private int blackKing;
     private int moveCount = 0;
@@ -16,6 +16,11 @@ public class GameBoard{
     public boolean stalemate = false;
     public boolean whiteCheck = false;
     public boolean blackCheck = false;
+    private Move lastMove = null;
+    private boolean currentColor = true; //True means it's white's turn, false is blacks.
+    private ArrayList<Move> currentMoveList = new ArrayList<>();
+    private ArrayList<Move> enemyMoveList = new ArrayList<>();
+
 
 
     public GameBoard(){
@@ -30,10 +35,10 @@ public class GameBoard{
             }
             i++;
         }
-        this.print();
     }
     public GameBoard copy(){
         GameBoard newBoard = new GameBoard(board);
+        //newBoard.print();
         newBoard.blackKing = this.blackKing;
         newBoard.whiteKing = this.whiteKing;
         return newBoard;
@@ -52,6 +57,7 @@ public class GameBoard{
 
 
     private Pieces movePiece(Move move){
+        this.lastMove = move;
         moveCount++;
         board[move.getFrom()].move(move.getTo());
         Pieces removed = board[move.getTo()];
@@ -160,6 +166,7 @@ public class GameBoard{
     }
     public final void moveWKing(int newPos){ whiteKing = newPos;}
     public final void moveBKing(int newPos){blackKing = newPos;}
+    public final Move getLastMove(){return lastMove;}
     public final int getMoveCount(){return moveCount;}
 
     public void setBoard(){
@@ -347,5 +354,10 @@ public class GameBoard{
         }
         evaluation = eval;
         return evaluation;
+    }
+
+    @Override
+    public int compareTo(GameBoard o) {
+        return (int)((evaluation - o.evaluation)*10);
     }
 }
