@@ -12,7 +12,10 @@ public class EvalList {
     private final Double[] king = new Double[64];
 
     public EvalList(String filePath){
+
+        System.out.println("hi");
         setLists(filePath);
+        System.out.println("hi");
     }
 
     public Double getBishop(int index) {return bishop[index];}

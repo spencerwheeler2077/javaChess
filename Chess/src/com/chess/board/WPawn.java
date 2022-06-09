@@ -11,7 +11,7 @@ public class WPawn extends Pieces{
         this.type = "pawn";
         this.hasMoved = false;
         this.canEP = false;
-        this.imagePath = "Art/WP.gif";
+        this.imagePath = "Chess/Art/WP.gif";
     }
     private WPawn(GameBoard gameBoard, int location, boolean hasMoved, boolean canEP) {
         super(true, gameBoard, location);
@@ -29,11 +29,11 @@ public class WPawn extends Pieces{
             Pieces nextSpace = gameBoard.getIndex(location - 8);
             if (nextSpace == null){
                 list.add(location -8);
-            }
-            if(!hasMoved){
-                nextSpace = gameBoard.getIndex(location - 16);
-                if(nextSpace == null){
-                    list.add(location - 16);
+                if(!hasMoved){
+                    nextSpace = gameBoard.getIndex(location - 16);
+                    if(nextSpace == null){
+                        list.add(location - 16);
+                    }
                 }
             }
             if((location %8) >0 ) {

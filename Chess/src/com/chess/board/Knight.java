@@ -7,7 +7,7 @@ public class Knight extends Pieces{
         super(white, gameBoard, location);
         this.value = 3;
         this.type = "knight";
-        this.imagePath= "Art/" + (color ? "WN": "BN") + ".gif";
+        this.imagePath= "Chess/Art/" + (color ? "WN": "BN") + ".gif";
     }
 
     @Override

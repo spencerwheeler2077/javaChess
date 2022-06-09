@@ -10,7 +10,7 @@ public class GameBoard implements Comparable<GameBoard>{
     private int whiteKing;
     private int blackKing;
     private int moveCount = 0;
-    public final EvalList evalList = new EvalList("EvalFIles/firstEvalFile");
+    public final EvalList evalList = new EvalList("Chess/EvalFiles/firstEvalFile");
     public double evaluation;
     public int checkmate = 0;
     public boolean stalemate = false;
@@ -18,16 +18,13 @@ public class GameBoard implements Comparable<GameBoard>{
     public boolean blackCheck = false;
     private Move lastMove = null;
     private boolean currentColor = true; //True means it's white's turn, false is blacks.
-    private ArrayList<Move> currentMoveList = new ArrayList<>();
-    private ArrayList<Move> enemyMoveList = new ArrayList<>();
-
-
+    private int pieceCount;
 
     public GameBoard(){
         setBoard();
         evaluation();
     }
-    private GameBoard(Pieces[] pieces){
+    private GameBoard(Pieces[] pieces, boolean color){
         int i = 0;
         for(Pieces piece: pieces){
             if(piece != null) {
@@ -35,9 +32,10 @@ public class GameBoard implements Comparable<GameBoard>{
             }
             i++;
         }
+        currentColor = color;
     }
     public GameBoard copy(){
-        GameBoard newBoard = new GameBoard(board);
+        GameBoard newBoard = new GameBoard(board, this.currentColor);
         //newBoard.print();
         newBoard.blackKing = this.blackKing;
         newBoard.whiteKing = this.whiteKing;
@@ -64,14 +62,20 @@ public class GameBoard implements Comparable<GameBoard>{
         board[move.getTo()] = board[move.getFrom()];
         board[move.getFrom()] = null;
         Pieces piece = board[move.getTo()];
-        if(piece.getType().equals("king")) {
-            if(piece.color){moveWKing(move.getTo());}
-            else{moveBKing(move.getTo());}
+        if (piece.getType().equals("king")) {
+            if (piece.color) {
+                moveWKing(move.getTo());
+            } else {
+                moveBKing(move.getTo());
+            }
         }
-        else if(piece.getType().equals("pawn") && (piece.location > 55 || piece.location < 8)){
-            //TODO if you want to make this trully accurate then this needs to be updated so that a pawn doesn't have
-            // to be promoted to a queen.
+        else if (piece.getType().equals("pawn") && (piece.location > 55 || piece.location < 8)) {
+                //TODO if you want to make this trully accurate then this needs to be updated so that a pawn doesn't have
+                // to be promoted to a queen.
             board[piece.location] = new Queen(piece.color, this, piece.location);
+        }
+        if (removed != null) {
+            pieceCount--;
         }
         return removed;
     }
@@ -93,6 +97,7 @@ public class GameBoard implements Comparable<GameBoard>{
         board[kingLocation+3]=null;
         if(color){whiteKing = kingLocation+2;}
         else{blackKing = kingLocation + 2;}
+        currentColor = !currentColor;
         return true;
     }
 
@@ -114,6 +119,7 @@ public class GameBoard implements Comparable<GameBoard>{
         board[kingLocation-4]=null;
         if(color){whiteKing = kingLocation-2;}
         else{blackKing = kingLocation - 2;}
+        currentColor = !currentColor;
         return true;
     }
 
@@ -151,6 +157,7 @@ public class GameBoard implements Comparable<GameBoard>{
     }
 
     private void moveBack(Move move, Pieces removed){
+        if(removed != null){pieceCount ++;}
         board[move.getFrom()] = board[move.getTo()];
         board[move.getTo()] = removed;
         board[move.getFrom()].move(move.getFrom()); // change the location back to where it came from.
@@ -159,6 +166,7 @@ public class GameBoard implements Comparable<GameBoard>{
             if(piece.color){moveWKing(move.getFrom());}
             else{moveBKing(move.getFrom());}
         }
+
     }
 
     public Pieces getIndex(int index){
@@ -168,6 +176,7 @@ public class GameBoard implements Comparable<GameBoard>{
     public final void moveBKing(int newPos){blackKing = newPos;}
     public final Move getLastMove(){return lastMove;}
     public final int getMoveCount(){return moveCount;}
+    public final int getPieceCount(){return pieceCount;}
 
     public void setBoard(){
         board[0] = new Rook(false, this, 0);
@@ -194,6 +203,7 @@ public class GameBoard implements Comparable<GameBoard>{
         }
         whiteKing = 60;
         blackKing = 4;
+        pieceCount = 32;
     }
     public ArrayList<Move> getWhiteMoves(){
         ArrayList<Move> moves = new ArrayList<>();
@@ -244,6 +254,44 @@ public class GameBoard implements Comparable<GameBoard>{
         }
         return moves;
     }
+    public boolean AItryMove(Move attempt, Boolean color, ArrayList<Move> opponentsMoves, int oriPieceCount){
+        //Pretty much the same as the tryMove function, only it doesn't run as many lines,
+        //It skips any checking if the move given is a valid move (like a knight can move here,
+        // doesn't check for pins and what not).
+        if(attempt.getCastle().equals("short")){
+            return castleShort(color);
+        }
+        if(attempt.getCastle().equals("long")){
+            return castleLong(color);
+        }
+        if(oriPieceCount != pieceCount){ //This is checking if a piece was captured on the previous turn, if one was
+            //opponentsMoves needs to be updated.
+            opponentsMoves = color? getBlackMoves():getWhiteMoves();
+        }
+        if(board[attempt.getFrom()] == null){
+            return false;
+        }
+        Pieces removed = movePiece(attempt);
+        int king = color ? whiteKing:blackKing;
+        //ArrayList<Move> opponentsMoves = color ? getBlackMoves():getWhiteMoves(); TODO delete this, only here in-case new code doesn't work.
+        for(Move move: opponentsMoves){
+            if (move.getTo() ==  king){
+                moveBack(attempt, removed);
+                return false;
+            }
+        }
+        if(color){whiteCheck = false;}
+        else{blackCheck = false;}
+        resetEnPassant(color, attempt);
+        if(attempt.getTo() == whiteKing){
+            whiteCheck = true;
+        }
+        else if(attempt.getTo() == blackKing){
+            blackCheck = true;
+        }
+        currentColor = !currentColor;
+        return true;
+    }
 
     public Boolean tryMove(Move attempt, Boolean color){
         ArrayList<Move> friendlyMoves = !color ? getBlackMoves():getWhiteMoves();
@@ -256,12 +304,8 @@ public class GameBoard implements Comparable<GameBoard>{
         }
         if(!found){return false;}
 
-        if(attempt.getCastle().equals("short")){
-            return castleShort(color);
-        }
-        if(attempt.getCastle().equals("long")){
-            return castleLong(color);
-        }
+        if(attempt.getCastle().equals("short")){return castleShort(color);}
+        if(attempt.getCastle().equals("long")){return castleLong(color);}
         Pieces removed = movePiece(attempt);
         int king = color ? whiteKing:blackKing;
         ArrayList<Move> opponentsMoves = color ? getBlackMoves():getWhiteMoves();
@@ -281,6 +325,7 @@ public class GameBoard implements Comparable<GameBoard>{
         else if(attempt.getTo() == blackKing){
             blackCheck = true;
         }
+        currentColor = !currentColor;
         return true;
     }
 
@@ -341,10 +386,10 @@ public class GameBoard implements Comparable<GameBoard>{
             return 0;
         }
         if(blackCheck){
-            eval += .2;
+            eval += .5;
         }
         if(whiteCheck){
-            eval +=.2;
+            eval +=.5;
         }
         for(Pieces piece : board){
             if(piece != null) {
@@ -358,6 +403,11 @@ public class GameBoard implements Comparable<GameBoard>{
 
     @Override
     public int compareTo(GameBoard o) {
-        return (int)((evaluation - o.evaluation)*10);
+        if(currentColor){
+            return (int)((evaluation - o.evaluation)*10);
+        }
+        else{
+            return (int)((o.evaluation - evaluation)*10);
+        }
     }
 }

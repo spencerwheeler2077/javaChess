@@ -11,7 +11,7 @@ public class BPawn extends Pieces{
         this.value = 1;
         this.hasMoved = false;
         this.canEP = false;
-        this.imagePath = "Art/BP.gif";
+        this.imagePath = "Chess/Art/BP.gif";
     }
     private BPawn(GameBoard gameBoard, int location, boolean hasMoved, boolean canEP) {
         super(false, gameBoard, location);
@@ -28,13 +28,14 @@ public class BPawn extends Pieces{
         Pieces nextSpace=gameBoard.getIndex(location + 8);
         if(nextSpace == null){
             moves.add(location + 8);
-        }
-        if(!hasMoved()){
-            nextSpace = gameBoard.getIndex(location + 16);
-            if(nextSpace == null){
-                moves.add(location + 16);
+            if(!hasMoved()){
+                nextSpace = gameBoard.getIndex(location + 16);
+                if(nextSpace == null){
+                    moves.add(location + 16);
+                }
             }
         }
+
         if(location%8 > 0) {
             nextSpace = gameBoard.getIndex(location + 7);
             if (nextSpace != null && nextSpace.color != color) {

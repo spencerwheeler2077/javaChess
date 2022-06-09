@@ -38,7 +38,7 @@ public class Chess{
             if(currentPlayer.getStatus()){
                 Move test = currentPlayer.useMove();
                 gameBoard.printMoves(turn);
-                Boolean success = gameBoard.tryMove(test, turn);
+                boolean success = gameBoard.tryMove(test, turn);
                 if(success){
                     turn = !turn;
                     currentPlayer = turn ? white:black;

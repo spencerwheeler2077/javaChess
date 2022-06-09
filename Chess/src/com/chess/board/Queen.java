@@ -7,7 +7,7 @@ public class Queen extends Pieces{
         super(white, gameBoard, location);
         this.value = 9;
         this.type = "queen";
-        this.imagePath= "Art/" + (color ? "WQ": "BQ") + ".gif";
+        this.imagePath= "Chess/Art/" + (color ? "WQ": "BQ") + ".gif";
     }
 
     @Override

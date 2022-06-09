@@ -1,6 +1,5 @@
 package com.chess.board;
 
-import com.sun.org.apache.xalan.internal.xsltc.dom.ArrayNodeListIterator;
 
 import java.util.ArrayList;
 
@@ -9,7 +8,7 @@ public class Bishop extends Pieces{
         super(white, gameBoard, location);
         this.value = 3.1;
         this.type = "bishop";
-        this.imagePath= "Art/" + (color ? "WB": "BB") + ".gif";
+        this.imagePath= "Chess/Art/" + (color ? "WB": "BB") + ".gif";
     }
 
     @Override

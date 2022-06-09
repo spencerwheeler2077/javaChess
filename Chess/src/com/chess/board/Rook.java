@@ -9,14 +9,15 @@ public class Rook extends Pieces{
         this.value = 5;
         hasMoved = false;
         this.type="rook";
-        this.imagePath= "Art/" + (color ? "WR": "BR") + ".gif";
+        this.imagePath= "Chess/Art/" + (color ? "WR": "BR") + ".gif";
     }
     public Rook(boolean white, GameBoard gameBoard, int position, boolean hasMoved) {
         super(white, gameBoard, position);
         this.value = 5;
         this.hasMoved = hasMoved;
         this.type="rook";
-        this.imagePath= "Art/" + (color ? "WR": "BR") + ".gif";
+        this.imagePath= "Chess/Art/" + (color ? "WR": "BR") + ".gif";
+
     }
 
     @Override

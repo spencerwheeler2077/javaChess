@@ -21,14 +21,15 @@ public class AI extends Player{
     }
     @Override
     public void generateMove(GameBoard gameBoard){
+        int origPieceCount = gameBoard.getPieceCount();//Just something that needs to found, to give the AItryMove function.
         GameBoard copy;
-        ArrayList<Move> moves = color? gameBoard.getWhiteMoves():gameBoard.getBlackMoves();
+        ArrayList<Move> allMoves = color? gameBoard.getWhiteMoves():gameBoard.getBlackMoves();
+        ArrayList<Move> badMoves = color? gameBoard.getBlackMoves() : gameBoard.getWhiteMoves();
         final int LIST_SIZE = 6;
-        PriorityQueue<GameBoard> moveList = new PriorityQueue<>(moves.size());
-        for(Move move: moves) {
+        PriorityQueue<GameBoard> moveList = new PriorityQueue<>(allMoves.size());
+        for(Move move: allMoves) {
             copy = gameBoard.copy();
-
-            if (copy.tryMove(move, color)) {
+            if (copy.AItryMove(move, color, badMoves, origPieceCount)) {
                 copy.evaluation();
                 moveList.add(copy);
             }
@@ -38,7 +39,7 @@ public class AI extends Player{
         for(int i = 0; i < LIST_SIZE; i++){
             GameBoard board = moveList.remove();
             Move currentMove = board.getLastMove();
-            board.evaluation = findBesteval(board, !color, LIST_SIZE -1);
+            board.evaluation = findBesteval(board, !color, LIST_SIZE -1, badMoves);
             if(best == null){
                 best = board;
                 bestMove = currentMove;
@@ -58,21 +59,24 @@ public class AI extends Player{
         }
         this.moveStatus.setMove(bestMove);
     }
-    private double findBesteval(GameBoard gameBoard, Boolean color, int depth) {
+    private double findBesteval(GameBoard gameBoard, Boolean color, int depth, ArrayList<Move> allMoves) {
+        int oriPieceCount = gameBoard.getPieceCount();
         if(depth == 2){
             return gameBoard.evaluation();
         }
-        ArrayList<Move> allMoves = color? gameBoard.getWhiteMoves(): gameBoard.getBlackMoves();
-        GameBoard copy = null;
+        ArrayList<Move> badMoves = color? gameBoard.getBlackMoves() : gameBoard.getWhiteMoves();
+        GameBoard copy;
         if(allMoves.size()== 0){
             gameBoard.checkFinish();
             return gameBoard.evaluation();
         }
+        gameBoard.print();
         PriorityQueue<GameBoard> boards = new PriorityQueue<>(allMoves.size());
         for(Move currentMove: allMoves){
             copy = gameBoard.copy();
-            if(gameBoard.tryMove(currentMove, color)){
+            if(copy.AItryMove(currentMove, color, badMoves, oriPieceCount)){
                 copy.evaluation();
+                gameBoard.print();
                 boards.add(copy);
             }
         }
@@ -80,7 +84,7 @@ public class AI extends Player{
         for(int i = 0; i<depth; i++){
             if(!boards.isEmpty()) {
                 GameBoard board = boards.remove();
-                board.evaluation = findBesteval(board, !color, depth - 1);
+                board.evaluation = findBesteval(board, !color, depth - 1, badMoves);
                 if (best == null) {
                     best = board;
                 }
